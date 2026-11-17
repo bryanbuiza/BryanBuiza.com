@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+/*
+ * El sitio original se hizo con Tailwind v3. Estos valores fijan los colores,
+ * la fuente y la sombra exactos de v3 para que el diseño se vea idéntico
+ * (Tailwind v4 usa colores oklch ligeramente distintos).
+ */
+@theme {
+  --font-sans:
+    ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
+
+  --color-slate-200: #e2e8f0;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-violet-300: #c4b5fd;
+  --color-violet-400: #a78bfa;
+  --color-violet-500: #8b5cf6;
+  --color-violet-600: #7c3aed;
+  --color-violet-900: #4c1d95;
+  --color-purple-500: #a855f7;
+  --color-indigo-600: #4f46e5;
+}
+
+/* drop-shadow-lg de Tailwind v3 (dos sombras; en v4 cambió a una sola). */
+@utility drop-shadow-v3-lg {
+  filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
+}
+
+/* Fondo de partículas: fijo detrás de todo el contenido. */
+#particles-js {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--color-slate-900);
+}

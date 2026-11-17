@@ -1,0 +1,153 @@
+---
+// Texto con efecto glitch (aberración cromática que tiembla medio segundo).
+//
+//   <GlitchText texts={["Uno", "Dos"]} />  → rota entre los textos, con glitch en cada cambio
+//   <GlitchText texts={["Solo uno"]} />    → repite el glitch sobre el mismo texto cada 5 s
+//
+// Es autocontenido: estilos y animación viven en este archivo, y Astro solo los
+// incluye en las páginas que usan el componente.
+
+interface Props {
+  texts: readonly string[];
+}
+
+const { texts } = Astro.props;
+const first = texts[0];
+---
+
+<span
+  class="glitch-text"
+  data-glitch
+  data-text={first}
+  data-glitch-texts={texts.length > 1 ? JSON.stringify(texts) : undefined}
+>
+  {first}
+</span>
+
+<style>
+  .glitch-text {
+    position: relative;
+    display: inline-block;
+    color: #fff;
+  }
+
+  .glitch-text::before,
+  .glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    color: inherit;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .glitch-text::before {
+    text-shadow: -1px 0 #8b5cf6;
+  }
+
+  .glitch-text::after {
+    text-shadow: 1px 0 #74a309;
+  }
+
+  .glitch-text.is-glitching::before {
+    animation: glitch-before 0.5s linear forwards;
+  }
+
+  .glitch-text.is-glitching::after {
+    animation: glitch-after 0.5s linear forwards;
+  }
+
+  @keyframes glitch-before {
+    0% {
+      transform: translate(0, 0);
+      opacity: 0;
+    }
+    20% {
+      transform: translate(-2px, -2px);
+      opacity: 0.8;
+    }
+    40% {
+      transform: translate(2px, 2px);
+      opacity: 0.8;
+    }
+    60% {
+      transform: translate(-1px, -1px);
+      opacity: 0.8;
+    }
+    80% {
+      transform: translate(1px, 1px);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translate(0, 0);
+      opacity: 0;
+    }
+  }
+
+  @keyframes glitch-after {
+    0% {
+      transform: translate(0, 0);
+      opacity: 0;
+    }
+    20% {
+      transform: translate(2px, 2px);
+      opacity: 0.8;
+    }
+    40% {
+      transform: translate(-2px, -2px);
+      opacity: 0.8;
+    }
+    60% {
+      transform: translate(1px, 1px);
+      opacity: 0.8;
+    }
+    80% {
+      transform: translate(-1px, -1px);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translate(0, 0);
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  const GLITCH_MS = 500;
+  const ROTATE_EVERY_MS = 3000;
+  const REPEAT_EVERY_MS = 5000;
+
+  function setText(el: HTMLElement, text: string) {
+    el.textContent = text;
+    el.dataset.text = text;
+  }
+
+  function glitch(el: HTMLElement, onDone?: () => void) {
+    el.classList.add("is-glitching");
+    setTimeout(() => {
+      el.classList.remove("is-glitching");
+      onDone?.();
+    }, GLITCH_MS);
+  }
+
+  function rotate(el: HTMLElement, texts: string[]) {
+    let index = 0;
+    const next = () => {
+      index = (index + 1) % texts.length;
+      setText(el, texts[index]!);
+      glitch(el, () => setTimeout(next, ROTATE_EVERY_MS));
+    };
+    setTimeout(next, ROTATE_EVERY_MS);
+  }
+
+  function repeat(el: HTMLElement) {
+    glitch(el);
+    setInterval(() => glitch(el), REPEAT_EVERY_MS);
+  }
+
+  document.querySelectorAll<HTMLElement>("[data-glitch]").forEach((el) => {
+    const texts: string[] = el.dataset.glitchTexts ? JSON.parse(el.dataset.glitchTexts) : [];
+    if (texts.length > 1) rotate(el, texts);
+    else repeat(el);
+  });
+</script>

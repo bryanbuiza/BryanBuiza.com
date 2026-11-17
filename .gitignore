@@ -1,0 +1,24 @@
+# build
+dist/
+.astro/
+
+# dependencias
+node_modules/
+
+# logs
+npm-debug.log*
+firebase-debug.log*
+
+# entorno
+.env
+.env.*
+
+# firebase
+.firebase/
+
+# sistema
+.DS_Store
+Thumbs.db
+
+# configuración local de Claude Code
+.claude/

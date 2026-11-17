@@ -1,0 +1,83 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ExperienceItem from "../components/ExperienceItem.astro";
+import Header from "../components/Header.astro";
+import Section from "../components/Section.astro";
+import ArrowUpRight from "../components/icons/ArrowUpRight.astro";
+import { about } from "../data/about";
+import { experience } from "../data/experience";
+import { site } from "../data/site";
+---
+
+<BaseLayout>
+  <div class="mx-auto min-h-screen max-w-7xl px-6 py-12 font-sans md:px-12 md:py-16 lg:py-0">
+    <a
+      href="#content"
+      class="absolute top-0 left-0 block -translate-x-full rounded bg-linear-to-br from-violet-400 via-purple-500 to-indigo-600 px-4 py-3 text-sm font-bold tracking-widest text-white uppercase focus-visible:translate-x-0"
+    >
+      Saltar al Contenido
+    </a>
+
+    <div class="lg:flex lg:justify-between lg:gap-4">
+      <Header />
+
+      <main id="content" class="pt-24 lg:w-[52%] lg:py-24">
+        <Section id="about" title="Acerca de" label="Acerca de mí">
+          {about.map((paragraph) => (
+            <p class="mb-4">{paragraph}</p>
+          ))}
+        </Section>
+
+        <Section id="experience" title="Experiencia" label="Experiencia laboral">
+          <ol class="group/list">
+            {experience.map((item) => (
+              <ExperienceItem item={item} />
+            ))}
+          </ol>
+          <div class="mt-12">
+            <a
+              class="group/link inline-flex items-baseline text-base leading-tight font-semibold text-slate-200 hover:text-violet-300 focus-visible:text-violet-300"
+              href={site.cvUrl}
+              target="_blank"
+              rel="noreferrer noopener"
+              aria-label="Ver CV completo (abre en una nueva pestaña)"
+            >
+              <span>
+                Ver CV completo{" "}
+                <span class="inline-block">
+                  <ArrowUpRight />
+                </span>
+              </span>
+            </a>
+          </div>
+        </Section>
+
+        <Section id="projects" title="Proyectos" label="Proyectos seleccionados">
+          <p class="text-slate-400">
+            Actualmente no hay proyectos listados. ¡Pronto habrá novedades!
+          </p>
+        </Section>
+
+        <Section id="writing" title="Escritos" label="Publicaciones de blog">
+          <p class="text-slate-400">No hay publicaciones de blog por el momento.</p>
+        </Section>
+
+        <footer class="max-w-md pb-16 text-sm text-slate-500 sm:pb-0">
+          <p>
+            Construido con{" "}
+            <a
+              href="https://tailwindcss.com/"
+              class="font-medium text-slate-400 hover:text-violet-300 focus-visible:text-violet-300"
+              target="_blank"
+              rel="noreferrer noopener"
+              aria-label="Tailwind CSS (abre en una nueva pestaña)"
+            >
+              Tailwind CSS
+            </a>
+            .
+          </p>
+        </footer>
+      </main>
+    </div>
+  </div>
+</BaseLayout>

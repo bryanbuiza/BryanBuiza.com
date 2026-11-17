@@ -1,0 +1,74 @@
+---
+import "../styles/global.css";
+import { site } from "../data/site";
+// Versión ya minificada de la librería (ver tools/minify-particles.mjs). Con `?url`
+// Vite la publica tal cual, con hash en el nombre, para cargarla como script clásico.
+import particlesLibUrl from "../vendor/particles.min.js?url";
+
+interface Props {
+  title?: string;
+  description?: string;
+  bodyClass?: string;
+}
+
+const {
+  title = site.name,
+  description = site.description,
+  bodyClass = "text-slate-400",
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="es" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={site.ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={site.ogImage} />
+
+    <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="/favicon/site.webmanifest" />
+    <meta name="theme-color" content={site.themeColor} />
+  </head>
+  <body
+    class:list={[
+      "bg-slate-900 leading-relaxed antialiased selection:bg-violet-300 selection:text-violet-900",
+      bodyClass,
+    ]}
+  >
+    <div id="particles-js"></div>
+    <div class="relative">
+      <!-- Resplandor violeta fijo sobre el fondo. -->
+      <div
+        class="pointer-events-none fixed inset-0 z-30 transition duration-300 lg:absolute"
+        style="background: radial-gradient(600px at 634px 2179px, rgba(99, 66, 173, 0.15), transparent 80%);"
+      ></div>
+      <slot />
+    </div>
+
+    <script is:inline defer src={particlesLibUrl}></script>
+    <script>
+      import { initParticles } from "../scripts/particles";
+
+      initParticles();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,51 @@
+---
+// Columna izquierda: nombre, subtítulo, navegación y redes.
+// En pantallas grandes queda fija (sticky) mientras se hace scroll del contenido.
+import SocialIcon from "./icons/SocialIcon.astro";
+import { navLinks, site, socialLinks } from "../data/site";
+---
+
+<header class="lg:sticky lg:top-0 lg:flex lg:max-h-screen lg:w-[48%] lg:flex-col lg:justify-between lg:py-24">
+  <div>
+    <h1 class="text-4xl font-bold tracking-tight text-slate-200 sm:text-5xl">
+      <a href="/">{site.name}</a>
+    </h1>
+    <h2 class="mt-3 text-lg font-medium tracking-tight text-slate-200 sm:text-xl">{site.role}</h2>
+    <p class="mt-4 max-w-xs leading-normal">{site.tagline}</p>
+
+    <nav class="hidden lg:block" aria-label="Enlaces de salto en página">
+      <ul class="mt-16 w-max">
+        {navLinks.map((link) => (
+          <li>
+            <a class="group flex items-center py-3" href={link.href}>
+              <span class="mr-4 h-px w-8 bg-slate-600 transition-all group-hover:w-16 group-hover:bg-violet-300 group-focus-visible:w-16 group-focus-visible:bg-violet-300 motion-reduce:transition-none" />
+              <span class="text-xs font-bold tracking-widest text-slate-500 uppercase group-hover:text-violet-300 group-focus-visible:text-violet-300">
+                {link.label}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+
+  <ul class="mt-8 ml-1 flex items-center" aria-label="Redes sociales">
+    {socialLinks.map((social) => (
+      <li class="mr-5 shrink-0 text-xs">
+        <a
+          class="block hover:text-violet-300"
+          href={social.href}
+          title={social.label}
+          aria-label={
+            social.external ? `${social.label} (abre en una nueva pestaña)` : social.label
+          }
+          target={social.external ? "_blank" : undefined}
+          rel="noreferrer noopener"
+        >
+          <span class="sr-only">{social.label}</span>
+          <SocialIcon name={social.icon} />
+        </a>
+      </li>
+    ))}
+  </ul>
+</header>

@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import GlitchText from "../components/GlitchText.astro";
+---
+
+<BaseLayout
+  title="404 - Página No Encontrada"
+  description="La página que buscas no se ha encontrado."
+  bodyClass="text-slate-200"
+>
+  <div class="flex min-h-screen items-center justify-center p-6">
+    <div class="text-center">
+      <h1 class="text-9xl font-bold text-violet-400">404</h1>
+      <h2 class="mt-4 text-3xl font-medium text-slate-200">
+        <GlitchText texts={["Página No Encontrada"]} />
+      </h2>
+      <p class="mt-2 text-lg text-slate-400">
+        Lo sentimos, la página que buscas no existe o se ha movido.
+      </p>
+      <a
+        href="/"
+        class="mt-6 inline-block rounded-md bg-violet-500 px-6 py-3 text-lg font-semibold text-white shadow-lg transition-colors duration-200 hover:bg-violet-600 focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 focus-visible:outline-hidden"
+      >
+        Volver a la página de inicio
+      </a>
+    </div>
+  </div>
+</BaseLayout>
