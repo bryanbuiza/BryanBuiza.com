@@ -55,6 +55,16 @@ Cada push a `main` dispara un build en Cloudflare (Workers Builds) que corre
 `npm run build` y `npx wrangler deploy`. Cloudflare sirve `dist/` como archivos
 estáticos, sin ejecutar código propio.
 
+Configuración en el panel de Cloudflare (no está en el repo):
+
+- **Worker `bryanbuiza` → Domains & Routes:** `bryanbuiza.com` y `www.bryanbuiza.com`
+  como Custom Domains.
+- **Zona → Rules → Redirect Rules:** `*://www.bryanbuiza.com/*` →
+  `https://bryanbuiza.com/${2}` (301, conserva la query string).
+- **Zona → SSL/TLS → Edge Certificates:** Always Use HTTPS activado.
+
+El dominio canónico es `bryanbuiza.com` (sin www), definido en `astro.config.mjs`.
+
 Para actualizar contenido (un trabajo nuevo, otro párrafo, cambiar el CV), en
 general basta con editar los archivos de `src/data/` o reemplazar el PDF en
 `public/resources/`.

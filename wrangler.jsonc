@@ -1,6 +1,10 @@
 // Configuración de Cloudflare Workers.
 // El sitio es 100% estático: Cloudflare sirve directamente los archivos de dist/
 // sin ejecutar código propio (gratis e ilimitado en el plan Free).
+//
+// Los dominios (bryanbuiza.com y www) se asignan en el panel de Cloudflare, no aquí:
+// si se declaran en "routes", cada build necesitaría permisos sobre la zona DNS.
+// La redirección www → bryanbuiza.com es una Redirect Rule de la zona.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "bryanbuiza",
