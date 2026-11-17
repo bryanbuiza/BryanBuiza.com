@@ -1,7 +1,7 @@
 # bryanbuiza.com
 
 Sitio personal de Bryan Buiza. Hecho con [Astro](https://astro.build) y
-[Tailwind CSS](https://tailwindcss.com), publicado en Firebase Hosting.
+[Tailwind CSS](https://tailwindcss.com), publicado en Cloudflare Workers.
 
 ## Comandos
 
@@ -11,17 +11,19 @@ Sitio personal de Bryan Buiza. Hecho con [Astro](https://astro.build) y
 | `npm run dev`              | Servidor local con recarga en `localhost:4321`                 |
 | `npm run build`            | Revisa tipos y genera el sitio estático en `dist/`             |
 | `npm run preview`          | Sirve `dist/` localmente para revisarlo                        |
+| `npm run preview:worker`   | Compila y lo sirve con el emulador de Cloudflare en `:8787`    |
 | `npm run format`           | Formatea el código con Prettier                                |
-| `npm run deploy`           | Compila y publica en Firebase Hosting                          |
+| `npm run deploy`           | Compila y publica a mano (requiere `npx wrangler login`)       |
 | `npm run vendor:particles` | Regenera `src/vendor/particles.min.js` (casi nunca hace falta) |
 
 ## Estructura
 
 ```
 public/                  Archivos que se copian tal cual (favicons, CV en PDF, robots.txt)
+  _headers               Cabeceras HTTP de Cloudflare (caché de _astro/)
 src/
   data/                  Contenido editable: textos, redes, experiencia
-    site.ts              Nombre, descripción, subtítulos rotativos, redes, enlace al CV
+    site.ts              Nombre, descripción, subtítulo, redes, enlace al CV
     about.ts             Párrafos de "Acerca de"
     experience.ts        Lista de trabajos
   layouts/
@@ -43,7 +45,15 @@ src/
     404.astro            Página de error
 tools/
   minify-particles.mjs   Genera src/vendor/particles.min.js desde node_modules
+wrangler.jsonc           Configuración de Cloudflare Workers
+.node-version            Versión de Node que usa el build de Cloudflare
 ```
+
+## Publicación
+
+Cada push a `main` dispara un build en Cloudflare (Workers Builds) que corre
+`npm run build` y `npx wrangler deploy`. Cloudflare sirve `dist/` como archivos
+estáticos, sin ejecutar código propio.
 
 Para actualizar contenido (un trabajo nuevo, otro párrafo, cambiar el CV), en
 general basta con editar los archivos de `src/data/` o reemplazar el PDF en
@@ -58,5 +68,3 @@ general basta con editar los archivos de `src/data/` o reemplazar el PDF en
   (ver `src/scripts/particles.ts`). La librería está abandonada y su paquete no
   trae versión minificada, así que la minificamos una vez con
   `npm run vendor:particles` y guardamos el resultado en `src/vendor/`.
-- El proyecto de Firebase es `bryanbuiza-cc20f` (`.firebaserc`). Para publicar
-  hace falta `firebase login` una vez.

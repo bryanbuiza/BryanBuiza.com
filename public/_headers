@@ -1,0 +1,6 @@
+# Cabeceras HTTP para Cloudflare (https://developers.cloudflare.com/workers/static-assets/headers/).
+
+# Los archivos de _astro/ llevan un hash en el nombre: si cambian, cambia el nombre.
+# Por eso se pueden guardar en caché un año sin riesgo.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

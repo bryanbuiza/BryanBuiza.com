@@ -1,0 +1,13 @@
+// Configuración de Cloudflare Workers.
+// El sitio es 100% estático: Cloudflare sirve directamente los archivos de dist/
+// sin ejecutar código propio (gratis e ilimitado en el plan Free).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bryanbuiza",
+  "compatibility_date": "2026-11-10",
+  "assets": {
+    "directory": "./dist",
+    // Rutas inexistentes devuelven dist/404.html con estado HTTP 404.
+    "not_found_handling": "404-page",
+  },
+}
