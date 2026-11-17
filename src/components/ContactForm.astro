@@ -1,0 +1,152 @@
+---
+// Formulario de contacto. Envía los datos a /api/contact (worker/contact.ts),
+// que verifica Turnstile y reenvía el mensaje por correo.
+//
+// Turnstile (el anti-bots de Cloudflare) se carga recién cuando el formulario
+// se acerca a la pantalla, para no sumar peso a la carga inicial de la página.
+import { site } from "../data/site";
+
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || site.turnstileSiteKey;
+if (!siteKey) {
+  throw new Error("Falta la clave de Turnstile: site.turnstileSiteKey en src/data/site.ts");
+}
+
+const inputClass =
+  "mt-2 block w-full rounded-md border border-slate-700 bg-slate-800/50 px-3 py-2 text-sm text-slate-200 placeholder:text-slate-500 focus:border-violet-300 focus:ring-1 focus:ring-violet-300 focus:outline-hidden";
+const labelClass = "block text-sm font-medium text-slate-200";
+---
+
+<p class="mb-8">
+  ¿Tienes un proyecto, una consulta o quieres conversar? Escríbeme y te respondo pronto.
+</p>
+
+<form class="grid gap-5" data-contact-form>
+  <div class="grid gap-5 sm:grid-cols-2">
+    <label class={labelClass}>
+      Nombre
+      <input
+        class={inputClass}
+        type="text"
+        name="name"
+        autocomplete="name"
+        required
+        maxlength="100"
+      />
+    </label>
+    <label class={labelClass}>
+      Correo
+      <input
+        class={inputClass}
+        type="email"
+        name="email"
+        autocomplete="email"
+        required
+        maxlength="254"
+      />
+    </label>
+  </div>
+
+  <label class={labelClass}>
+    Mensaje
+    <textarea
+      class:list={[inputClass, "resize-y"]}
+      name="message"
+      rows="5"
+      required
+      maxlength="5000"
+    ></textarea>
+  </label>
+
+  <!-- Aquí se dibuja el widget de Turnstile; agrega el campo cf-turnstile-response. -->
+  <div class="min-h-[65px]" data-turnstile data-sitekey={siteKey}></div>
+
+  <div class="flex flex-wrap items-center gap-4">
+    <button
+      type="submit"
+      class="rounded-md bg-violet-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-colors duration-200 hover:bg-violet-600 focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      Enviar mensaje
+    </button>
+    <p class="text-sm" role="status" aria-live="polite" data-contact-status></p>
+  </div>
+</form>
+
+<script>
+  interface Turnstile {
+    render(container: HTMLElement, options: Record<string, unknown>): string;
+    reset(widgetId?: string): void;
+  }
+
+  declare global {
+    interface Window {
+      turnstile?: Turnstile;
+      onTurnstileLoad?: () => void;
+    }
+  }
+
+  const TURNSTILE_SCRIPT =
+    "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad";
+
+  const form = document.querySelector<HTMLFormElement>("[data-contact-form]");
+  const container = form?.querySelector<HTMLElement>("[data-turnstile]");
+  const status = form?.querySelector<HTMLElement>("[data-contact-status]");
+  const button = form?.querySelector<HTMLButtonElement>("button[type=submit]");
+
+  if (form && container && status && button) {
+    let widgetId: string | undefined;
+
+    // Carga Turnstile cuando el formulario está a ~300px de entrar en pantalla.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        window.onTurnstileLoad = () => {
+          widgetId = window.turnstile?.render(container, {
+            sitekey: container.dataset.sitekey,
+            theme: "dark",
+            language: "es",
+          });
+        };
+        const script = document.createElement("script");
+        script.src = TURNSTILE_SCRIPT;
+        script.async = true;
+        document.head.append(script);
+      },
+      { rootMargin: "300px" },
+    );
+    observer.observe(form);
+
+    const setStatus = (message: string, tone: "info" | "success" | "error") => {
+      status.textContent = message;
+      status.classList.toggle("text-slate-400", tone === "info");
+      status.classList.toggle("text-violet-300", tone === "success");
+      status.classList.toggle("text-rose-300", tone === "error");
+    };
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      button.disabled = true;
+      setStatus("Enviando…", "info");
+
+      try {
+        const response = await fetch("/api/contact", { method: "POST", body: new FormData(form) });
+        const result: { ok: boolean; error?: string } = await response.json();
+        if (result.ok) {
+          form.reset();
+          setStatus("¡Gracias! Tu mensaje llegó. Te responderé pronto.", "success");
+        } else {
+          setStatus(result.error ?? "No se pudo enviar el mensaje.", "error");
+        }
+      } catch {
+        setStatus(
+          "No se pudo enviar el mensaje. Revisa tu conexión e inténtalo de nuevo.",
+          "error",
+        );
+      } finally {
+        button.disabled = false;
+        // Cada verificación de Turnstile sirve una sola vez: se pide una nueva.
+        window.turnstile?.reset(widgetId);
+      }
+    });
+  }
+</script>

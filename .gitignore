@@ -11,6 +11,8 @@ npm-debug.log*
 # entorno
 .env
 .env.*
+!.env.example
+.dev.vars
 
 # sistema
 .DS_Store

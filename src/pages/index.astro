@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactForm from "../components/ContactForm.astro";
 import ExperienceItem from "../components/ExperienceItem.astro";
 import Header from "../components/Header.astro";
 import Section from "../components/Section.astro";
@@ -60,6 +61,10 @@ import { site } from "../data/site";
 
         <Section id="writing" title="Escritos" label="Publicaciones de blog">
           <p class="text-slate-400">No hay publicaciones de blog por el momento.</p>
+        </Section>
+
+        <Section id="contact" title="Contacto" label="Formulario de contacto">
+          <ContactForm />
         </Section>
 
         <footer class="max-w-md pb-16 text-sm text-slate-500 sm:pb-0">

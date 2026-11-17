@@ -1,0 +1,7 @@
+# Copia este archivo como .dev.vars para desarrollo local (`npm run preview:worker`).
+# .dev.vars no se sube al repo. En producción estos valores son secretos del Worker.
+
+# Clave secreta de prueba de Turnstile: siempre aprueba.
+TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+# En local el correo no se envía de verdad; se guarda en un archivo.
+CONTACT_TO_EMAIL=owner@example.com

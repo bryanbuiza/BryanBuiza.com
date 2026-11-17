@@ -1,17 +1,35 @@
 // Configuración de Cloudflare Workers.
-// El sitio es 100% estático: Cloudflare sirve directamente los archivos de dist/
-// sin ejecutar código propio (gratis e ilimitado en el plan Free).
+//
+// El sitio es estático: Cloudflare sirve directamente los archivos de dist/ sin
+// ejecutar código (gratis e ilimitado en el plan Free). La única excepción es
+// /api/*, que corre el Worker de worker/index.ts (formulario de contacto).
 //
 // Los dominios (bryanbuiza.com y www) se asignan en el panel de Cloudflare, no aquí:
 // si se declaran en "routes", cada build necesitaría permisos sobre la zona DNS.
 // La redirección www → bryanbuiza.com es una Redirect Rule de la zona.
+//
+// Secretos (panel: Worker → Settings → Variables and Secrets; en local: .dev.vars):
+//   TURNSTILE_SECRET_KEY  clave secreta del widget de Turnstile
+//   CONTACT_TO_EMAIL      a dónde llegan los mensajes (no se guarda en el repo)
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "bryanbuiza",
+  "main": "worker/index.ts",
   "compatibility_date": "2026-11-10",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    // Solo estas rutas ejecutan el Worker; todo lo demás se sirve directo.
+    "run_worker_first": ["/api/*"],
     // Rutas inexistentes devuelven dist/404.html con estado HTTP 404.
     "not_found_handling": "404-page",
   },
+  "vars": {
+    // Remitente de los correos del formulario (debe ser del dominio).
+    "CONTACT_FROM_EMAIL": "contact-form@bryanbuiza.com",
+  },
+  // Envío de correo. En `wrangler dev` se simula: el correo se guarda en un archivo local.
+  "send_email": [{ "name": "EMAIL" }],
+  // Logs del Worker visibles en el panel (Worker → Observability).
+  "observability": { "enabled": true },
 }

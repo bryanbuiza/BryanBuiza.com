@@ -10,14 +10,20 @@ export const site = {
   ogImage: "https://placehold.co/1200x630/0f172a/e2e8f0?text=Bryan+Buiza",
   themeColor: "#0f172a",
   cvUrl: "/resources/cv_bryan_buiza_2025_aug_esp.pdf",
+  /**
+   * Clave pública (site key) del widget de Turnstile del formulario de contacto.
+   * Es pública: va en el HTML. En local, .env la reemplaza por la clave de prueba.
+   */
+  turnstileSiteKey: "0x4AAAAAAGFkqhJiRqvyGmZS",
 } as const;
 
 export const navLinks = [
   { href: "#about", label: "Acerca de" },
   { href: "#experience", label: "Experiencia" },
+  { href: "#contact", label: "Contacto" },
 ] as const;
 
-export type SocialIcon = "linkedin" | "email";
+export type SocialIcon = "linkedin";
 
 export const socialLinks: { label: string; href: string; icon: SocialIcon; external: boolean }[] = [
   {
@@ -25,11 +31,5 @@ export const socialLinks: { label: string; href: string; icon: SocialIcon; exter
     href: "https://www.linkedin.com/in/bryanbuiza/",
     icon: "linkedin",
     external: true,
-  },
-  {
-    label: "Correo electrónico",
-    href: "mailto:hello@bryanbuiza.com",
-    icon: "email",
-    external: false,
   },
 ];
