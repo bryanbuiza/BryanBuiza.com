@@ -1,10 +1,13 @@
 // @ts-check
 import { defineConfig } from "astro/config";
+import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  // Dominio canónico: se usa para og:url y las URLs absolutas.
+  // Dominio canónico: se usa para og:url, el sitemap y las URLs absolutas.
   site: "https://bryanbuiza.com",
+  // Genera sitemap-index.xml (la 404 queda fuera automáticamente).
+  integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],
     build: {

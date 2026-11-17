@@ -1,0 +1,48 @@
+---
+// Datos estructurados (JSON-LD, vocabulario schema.org) para los buscadores:
+// describen que el sitio es de una persona, a qué se dedica y dónde trabaja.
+// Se arman con los mismos datos de src/data/ para no repetir información.
+// Validar en: https://search.google.com/test/rich-results
+import { experience } from "../data/experience";
+import { site, socialLinks } from "../data/site";
+
+const siteUrl = new URL("/", Astro.site).href;
+const currentJob = experience.find((job) => job.period.includes("Presente"));
+
+const graph = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": `${siteUrl}#person`,
+      name: site.name,
+      url: siteUrl,
+      description: site.description,
+      jobTitle: "Ingeniero industrial y consultor TI",
+      image: new URL(site.ogImage.path, Astro.site).href,
+      sameAs: socialLinks.filter((link) => link.external).map((link) => link.href),
+      ...(currentJob && {
+        worksFor: { "@type": "Organization", name: currentJob.company, url: currentJob.url },
+      }),
+      knowsAbout: [
+        "Consultoría en tecnologías de la información",
+        "Mejora de procesos",
+        "CRM",
+        "ERP",
+        "Integración de sistemas y APIs",
+        "Business Intelligence",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}#website`,
+      name: site.name,
+      url: siteUrl,
+      inLanguage: "es",
+      publisher: { "@id": `${siteUrl}#person` },
+    },
+  ],
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(graph)} />

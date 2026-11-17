@@ -16,15 +16,17 @@ Sitio personal de Bryan Buiza. Hecho con [Astro](https://astro.build) y
 | `npm run format`           | Formatea el código con Prettier                                |
 | `npm run deploy`           | Compila y publica a mano (requiere `npx wrangler login`)       |
 | `npm run vendor:particles` | Regenera `src/vendor/particles.min.js` (casi nunca hace falta) |
+| `npm run og-image`         | Regenera `public/og-image.png` tras cambiar nombre o subtítulo |
 
 ## Estructura
 
 ```
 public/                  Archivos que se copian tal cual (favicons, CV en PDF, robots.txt)
   _headers               Cabeceras HTTP de Cloudflare (caché de _astro/)
+  og-image.png           Imagen de las vistas previas en redes (generada, no editar)
 src/
   data/                  Contenido editable: textos, redes, experiencia
-    site.ts              Nombre, descripción, subtítulo, redes, enlace al CV
+    site.ts              Nombre, título SEO, descripción, subtítulo, redes, enlace al CV
     about.ts             Párrafos de "Acerca de"
     experience.ts        Lista de trabajos
   layouts/
@@ -33,6 +35,7 @@ src/
     Header.astro         Columna izquierda: nombre, subtítulo, navegación, redes
     Section.astro        Sección con título sticky en móvil
     ContactForm.astro    Formulario de contacto (envía a /api/contact)
+    StructuredData.astro Datos estructurados para Google (JSON-LD: persona y sitio)
     ExperienceItem.astro Tarjeta de un trabajo
     TechTag.astro        Etiqueta de tecnología
     GlitchText.astro     Texto con efecto glitch (autocontenido; hoy solo en la 404)
@@ -51,6 +54,7 @@ worker/                  Código que corre en Cloudflare (solo para /api/*)
   worker-configuration.d.ts  Tipos generados por `npm run cf-typegen` (no editar)
 tools/
   minify-particles.mjs   Genera src/vendor/particles.min.js desde node_modules
+  generate-og-image.mjs  Genera public/og-image.png con los textos de site.ts (usa fuentes de Windows)
 wrangler.jsonc           Configuración de Cloudflare Workers
 .node-version            Versión de Node que usa el build de Cloudflare
 ```

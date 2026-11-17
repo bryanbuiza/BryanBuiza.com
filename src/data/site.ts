@@ -2,12 +2,21 @@
 
 export const site = {
   name: "Bryan Buiza",
+  /** Título de la pestaña y de los resultados de Google (idealmente < 60 caracteres). */
+  title: "Bryan Buiza · Ingeniero industrial y consultor TI",
+  /** Texto bajo el título en Google y en las vistas previas (idealmente < 160 caracteres). */
   description:
     "Bryan Buiza es ingeniero industrial y consultor TI. Ayuda a las empresas a mejorar sus procesos con tecnología.",
   /** Subtítulo bajo el nombre. */
   role: "Ingeniero industrial · Consultor TI",
   tagline: "Ayudo a las empresas a mejorar sus procesos con tecnología.",
-  ogImage: "https://placehold.co/1200x630/0f172a/e2e8f0?text=Bryan+Buiza",
+  /** Imagen de las vistas previas en redes. Se genera con `npm run og-image`. */
+  ogImage: {
+    path: "/og-image.png",
+    width: 1200,
+    height: 630,
+    alt: "Bryan Buiza — Ingeniero industrial y consultor TI",
+  },
   themeColor: "#0f172a",
   cvUrl: "/resources/cv_bryan_buiza_2025_aug_esp.pdf",
   /**

@@ -1,2 +1,7 @@
+# Cloudflare antepone a este archivo sus reglas para bots de IA ("Managed robots.txt").
+
 User-agent: *
 Allow: /
+Disallow: /api/
+
+Sitemap: https://bryanbuiza.com/sitemap-index.xml
