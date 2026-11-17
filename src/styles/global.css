@@ -49,6 +49,7 @@
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(600px at 50% 40%, rgb(99 66 173 / 0.15), transparent 80%);
+  /* Abajo a la izquierda: a un cuarto del ancho y cerca del borde inferior. */
+  background: radial-gradient(600px at 25% 85%, rgb(99 66 173 / 0.15), transparent 80%);
   will-change: transform;
 }
