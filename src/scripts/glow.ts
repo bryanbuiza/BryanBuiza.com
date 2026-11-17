@@ -18,6 +18,12 @@ const DAMPING = 0.85;
 const MAX_OFFSET = 24;
 /** Tope del empujón por evento, para saltos grandes (p. ej. al hacer clic en el menú). */
 const MAX_DELTA = 120;
+/**
+ * Los valores de arriba están pensados para 60 cuadros por segundo. Cada cuadro se
+ * escala según el tiempo real transcurrido, para que en pantallas de 120 Hz o más
+ * el rebote dure lo mismo y no vaya al doble de velocidad.
+ */
+const FRAME_MS = 1000 / 60;
 
 export function initGlow() {
   const glow = document.querySelector<HTMLElement>("[data-glow]");
@@ -27,10 +33,15 @@ export function initGlow() {
   let offset = 0;
   let velocity = 0;
   let frame = 0;
+  let lastTime = 0;
 
-  const step = () => {
-    velocity = (velocity - offset * STIFFNESS) * DAMPING;
-    offset += velocity;
+  const step = (now: number) => {
+    // Fracción de un cuadro de 60 fps (0.5 a 120 Hz); con tope por si la pestaña se pausó.
+    const f = lastTime ? Math.min((now - lastTime) / FRAME_MS, 4) : 1;
+    lastTime = now;
+
+    velocity = (velocity - offset * STIFFNESS * f) * DAMPING ** f;
+    offset += velocity * f;
     if (Math.abs(offset) > MAX_OFFSET) {
       // Al llegar al tope se frena ahí y el resorte lo trae de vuelta.
       offset = Math.sign(offset) * MAX_OFFSET;
@@ -42,6 +53,7 @@ export function initGlow() {
       offset = 0;
       velocity = 0;
       frame = 0;
+      lastTime = 0;
     } else {
       frame = requestAnimationFrame(step);
     }
