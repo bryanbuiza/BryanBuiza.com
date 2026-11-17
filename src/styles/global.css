@@ -38,3 +38,17 @@
   z-index: -1;
   background-color: var(--color-slate-900);
 }
+
+/*
+ * Resplandor violeta: fijo a la pantalla, sobre las partículas y detrás del contenido
+ * (va después de #particles-js en el HTML, con el mismo z-index). Su posición se
+ * ajusta en el "at X Y" del degradado. El rebote al hacer scroll está en scripts/glow.ts.
+ */
+.bg-glow {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(600px at 50% 40%, rgb(99 66 173 / 0.15), transparent 80%);
+  will-change: transform;
+}
